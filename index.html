@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YASH × NAMAN AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neonBlue: '#00f3ff',
+                        neonPurple: '#bc13fe',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'recording': 'recordingPulse 1.5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 1, boxShadow: '0 0 10px #00f3ff' },
+                            '50%': { opacity: .5, boxShadow: '0 0 20px #00f3ff' },
+                        },
+                        recordingPulse: {
+                            '0%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
+                            '70%': { boxShadow: '0 0 0 10px rgba(239, 68, 68, 0)' },
+                            '100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Markdown & Syntax Highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- Math (KaTeX) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Diagrams (Mermaid) -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <style>
+        :root {
+            /* Light Mode Defaults */
+            --bg-main: #f0f4f8;
+            --text-main: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(0,0,0,0.05);
+            --sidebar-border: rgba(0,0,0,0.05);
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --msg-user-bg: rgba(37, 99, 235, 0.1);
+            --msg-user-text: #1e293b;
+            --msg-ai-bg: rgba(255, 255, 255, 0.7);
+            --msg-ai-text: #334155;
+            --action-btn-hover: rgba(0,0,0,0.05);
+        }
+
+        .dark {
+            /* Dark Mode Overrides */
+            --bg-main: #050505;
+            --text-main: #e2e8f0;
+            --glass-bg: rgba(20, 25, 40, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --sidebar-border: rgba(255, 255, 255, 0.05);
+            --input-bg: rgba(0, 0, 0, 0.4);
+            --msg-user-bg: rgba(37, 99, 235, 0.2);
+            --msg-user-text: #ffffff;
+            --msg-ai-bg: rgba(20, 25, 40, 0.7);
+            --msg-ai-text: #e2e8f0;
+            --action-btn-hover: rgba(255,255,255,0.1);
+        }
+
+        /* CRITICAL: Fix Layout Expansion on Mobile */
+        html, body {
+            overflow-x: hidden;
+            width: 100vw;
+            max-width: 100vw;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Inter', sans-serif;
+            position: fixed; /* Prevents scroll bounce/zoom issues on iOS */
+            height: 100%;
+        }
+
+        /* Dynamic Background Gradients */
+        body::before {
+            content: ''; position: absolute; inset: 0; z-index: -1;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,0.1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+            pointer-events: none;
+        }
+        .dark body::before {
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+        }
+
+        /* Glass Utilities */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .glass-input {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+            outline: none;
+        }
+
+        .glass-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            transition: all 0.2s ease;
+        }
+        .glass-btn:hover {
+            border-color: rgba(100, 100, 100, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(100, 100, 100, 0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(100, 100, 100, 0.4); }
+
+        /* Typing Animation */
+        .typing-dot {
+            width: 6px; height: 6px; background-color: #00f3ff; border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+            margin: 0 2px;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Prose & Content Safety */
+        .prose {
+            max-width: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        .prose pre {
+            background: #1e1e1e !important;
+            border-radius: 8px; margin: 10px 0; padding: 0 !important;
+            border: 1px solid rgba(255,255,255,0.1); 
+            overflow-x: auto !important; /* Force scroll */
+            max-width: 100%;
+        }
+        .prose code {
+            font-family: 'Fira Code', monospace; font-size: 0.9em;
+            color: inherit;
+        }
+        .prose p { margin-bottom: 0.5rem; }
+        .prose p:last-child { margin-bottom: 0; }
+        .prose ul, .prose ol { margin-left: 1.5rem; list-style-type: disc; margin-bottom: 0.5rem; }
+        .prose strong { color: #00f3ff; }
+        .dark .prose strong { color: #00f3ff; }
+        .prose a { color: #bc13fe; text-decoration: underline; }
+
+        /* KaTeX / Math Overflow Fixes */
+        .katex-display {
+            overflow-x: auto !important;
+            overflow-y: hidden;
+            max-width: 100%;
+            width: 100%;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .katex {
+            font-size: 1.05em;
+            white-space: normal; /* Allow some wrapping */
+        }
+        .katex-html {
+            overflow-x: auto;
+        }
+        
+        /* Message Bubbles */
+        .msg-bubble-user { background: var(--msg-user-bg); color: var(--msg-user-text); border: 1px solid var(--glass-border); }
+        .msg-bubble-ai { background: var(--msg-ai-bg); color: var(--msg-ai-text); border: 1px solid var(--glass-border); }
+        
+        /* Flexbox safety for long content */
+        .msg-container { min-width: 0; flex: 1; }
+
+        /* Suggestion Chips */
+        .chip {
+            background: var(--input-bg); border: 1px solid var(--glass-border);
+            padding: 6px 12px; border-radius: 99px; font-size: 0.75rem;
+            cursor: pointer; white-space: nowrap; transition: all 0.2s;
+        }
+        .chip:hover { border-color: #00f3ff; color: #00f3ff; }
+        
+        /* Editing Highlight */
+        .editing-msg {
+            box-shadow: 0 0 0 2px #00f3ff, 0 0 20px rgba(0, 243, 255, 0.3);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="h-full w-full flex text-sm selection:bg-neonBlue selection:text-black overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="w-80 glass-panel flex flex-col z-30 transition-transform duration-300 absolute md:relative h-full -translate-x-full md:translate-x-0" style="border-right: 1px solid var(--sidebar-border);">
+        <div class="p-6 border-b flex items-center justify-between" style="border-color: var(--sidebar-border);">
+            <div class="flex items-center gap-2">
+                <span class="material-icons text-neonBlue">bolt</span>
+                <h1 class="text-lg font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-neonBlue to-neonPurple">NAMAN×YASH</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="theme-toggle" class="text-gray-400 hover:text-neonBlue transition-colors p-1" title="Toggle Theme">
+                    <span class="material-icons">dark_mode</span>
+                </button>
+                <button id="close-sidebar" class="md:hidden text-gray-400 hover:text-white transition-colors p-1">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <button id="btn-new-chat" class="w-full py-3 px-4 rounded-xl glass-btn flex items-center justify-center gap-2 text-current hover:shadow-[0_0_15px_rgba(0,243,255,0.1)] group transition-all">
+                <span class="material-icons text-neonBlue text-sm group-hover:rotate-90 transition-transform">add</span>
+                <span class="font-medium">New Chat</span>
+            </button>
+        </div>
+
+        <div id="chat-list" class="flex-1 overflow-y-auto p-3 space-y-1"></div>
+
+        <div class="p-4 border-t" style="border-color: var(--sidebar-border); background: var(--input-bg);">
+            <button id="btn-open-settings" class="w-full py-3 px-4 rounded-xl glass-btn flex items-center gap-3 text-gray-500 hover:text-current">
+                <span class="material-icons text-sm">settings</span>
+                <span>API Settings</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col relative h-full w-full overflow-hidden">
+        <header class="h-16 border-b flex items-center justify-between px-4 glass-panel z-20 backdrop-blur-xl shrink-0" style="border-color: var(--sidebar-border);">
+            <div class="flex items-center gap-3">
+                <button id="open-sidebar" class="md:hidden text-gray-400 hover:text-current">
+                    <span class="material-icons">menu</span>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-neonBlue to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        <span class="material-icons text-black text-lg">smart_toy</span>
+                    </div>
+                    <div>
+                        <h2 id="display-bot-name" class="font-semibold leading-tight">NAMAN × YASH Agent</h2>
+                        <div class="flex items-center gap-1.5">
+                            <span id="status-indicator" class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
+                            <span id="status-label" class="text-[10px] text-gray-500 font-medium tracking-wider">ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button id="btn-clear-chat" class="p-2 text-gray-500 hover:text-red-400 transition-colors" title="Clear History">
+                    <span class="material-icons text-lg">delete_outline</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Messages -->
+        <div id="messages-area" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth pb-40 w-full">
+            <div id="welcome-screen" class="h-full flex flex-col items-center justify-center text-center opacity-40">
+                <span class="material-icons text-7xl mb-6 text-gray-500">auto_awesome</span>
+                <h3 class="text-2xl font-bold mb-2">Welcome to Naman×Yash Ai</h3>
+                <p class="text-gray-500 max-w-sm">Configure your API key in settings to start chatting with the future.</p>
+            </div>
+        </div>
+
+        <!-- Scroll to bottom button -->
+        <button id="scroll-bottom-btn" class="hidden absolute bottom-44 right-6 w-10 h-10 rounded-full glass-panel shadow-lg flex items-center justify-center text-neonBlue z-50 hover:scale-110 transition-transform">
+            <span class="material-icons">arrow_downward</span>
+        </button>
+
+        <!-- Input -->
+        <div class="absolute bottom-0 w-full p-4 md:p-6 z-20 bg-gradient-to-t from-black via-black/80 to-transparent dark:from-black dark:via-black/90 dark:to-transparent shrink-0">
+            <!-- Gradient spacer for light mode legibility -->
+             <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)] to-transparent opacity-90 -z-10 h-full pointer-events-none"></div>
+
+            <div id="suggestion-chips" class="flex gap-2 mb-3 overflow-x-auto pb-1 opacity-0 transition-opacity duration-500 min-h-[32px]">
+                <!-- Chips injected here -->
+            </div>
+
+            <div id="attachments-preview" class="hidden flex gap-3 mb-3 overflow-x-auto pb-1"></div>
+
+            <div class="glass-panel rounded-2xl p-1.5 flex items-end shadow-2xl border-t border-white/10 relative">
+                <div class="flex pb-2 pl-1 gap-1">
+                    <button id="btn-attach" class="p-2 rounded-lg text-gray-400 hover:text-current hover:bg-white/10 transition-colors" title="Upload Image">
+                        <span class="material-icons text-xl">add_photo_alternate</span>
+                    </button>
+                    <!-- Speech to Text Button -->
+                    <button id="btn-mic" class="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-white/10 transition-colors" title="Voice Input">
+                        <span class="material-icons text-xl">mic</span>
+                    </button>
+
+                    <input type="file" id="file-input" class="hidden" accept="image/*" multiple>
+                    
+                    <button id="btn-image-gen" class="hidden p-2 rounded-lg text-gray-400 hover:text-neonPurple hover:bg-purple-500/10 transition-colors">
+                        <span class="material-icons text-xl">palette</span>
+                    </button>
+                </div>
+
+                <textarea id="chat-input" rows="1" placeholder="Ask anything..." class="flex-1 bg-transparent border-none text-current p-3 max-h-32 focus:ring-0 resize-none outline-none custom-scrollbar placeholder-gray-500 leading-relaxed font-sans" style="min-height: 48px;"></textarea>
+
+                <button id="btn-cancel-edit" class="hidden p-3 mb-1 mr-1 rounded-xl text-red-400 hover:bg-white/10 transition-all" title="Cancel Edit">
+                    <span class="material-icons text-lg">close</span>
+                </button>
+                
+                <button id="btn-send" class="p-3 mb-1 mr-1 rounded-xl bg-neonBlue text-black hover:shadow-[0_0_15px_rgba(0,243,255,0.4)] transition-all disabled:opacity-50">
+                    <span class="material-icons text-lg">send</span>
+                </button>
+            </div>
+            <div class="text-center mt-3 text-[10px] text-gray-500 font-medium">
+                AI generated content can be inaccurate.
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="modal-settings" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-xl rounded-2xl flex flex-col max-h-[85vh] shadow-[0_0_50px_rgba(0,243,255,0.1)] transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="flex justify-between items-center p-5 border-b" style="border-color: var(--sidebar-border);">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <span class="material-icons text-neonBlue text-sm">tune</span> Configuration
+                </h2>
+                <button id="btn-close-settings" class="text-gray-400 hover:text-current">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <div class="flex border-b px-5" style="border-color: var(--sidebar-border); background: var(--input-bg);">
+                <button class="tab-btn py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-neonBlue text-neonBlue" data-target="tab-chat">Chat</button>
+                <button class="tab-btn py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-500 hover:text-gray-300" data-target="tab-image">Image</button>
+                <button class="tab-btn py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-500 hover:text-gray-300" data-target="tab-system">System</button>
+                <button class="tab-btn py-3 px-4 text-xs font-bold uppercase tracking-wider border-b-2 border-transparent text-gray-500 hover:text-gray-300" data-target="tab-danger">Danger</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+                <!-- Chat Config -->
+                <div id="tab-chat" class="tab-content">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Bot Name</label>
+                            <input type="text" id="setting-bot-name" class="w-full glass-input rounded-lg p-3 text-sm font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Gemini API Key</label>
+                            <div class="relative">
+                                <input type="password" id="setting-api-key" placeholder="AIzaSy..." class="w-full glass-input rounded-lg p-3 text-sm font-mono tracking-wide pr-8">
+                                <span class="material-icons absolute right-2 top-2.5 text-gray-400 cursor-pointer text-sm hover:text-current" onclick="togglePassword('setting-api-key')">visibility</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Model</label>
+                            <select id="setting-model" class="w-full glass-input rounded-lg p-3 text-sm bg-black text-white">
+                                <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                                <option value="gemini-2.0-flash-lite-preview-02-05">Gemini 2.0 Flash Lite</option>
+                                <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="block text-xs font-semibold text-gray-400 uppercase">Temperature</label>
+                                <span id="temp-display" class="text-xs text-neonBlue font-mono">0.7</span>
+                            </div>
+                            <input type="range" id="setting-temp" min="0" max="2" step="0.1" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neonBlue">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Config -->
+                <div id="tab-image" class="tab-content hidden">
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 mb-6">
+                        <div>
+                            <h3 class="text-sm font-bold">Image Generation</h3>
+                            <p class="text-xs text-gray-400 mt-1">Enable visual creation capabilities</p>
+                        </div>
+                        <button id="toggle-image" class="w-12 h-6 rounded-full bg-gray-700 relative transition-colors">
+                            <span class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm"></span>
+                        </button>
+                    </div>
+                    <div id="image-config" class="space-y-4 opacity-50 pointer-events-none transition-opacity">
+                         <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Image API Key</label>
+                            <input type="password" id="setting-image-key" placeholder="Optional (Uses Chat key if empty)" class="w-full glass-input rounded-lg p-3 text-sm font-mono">
+                        </div>
+                         <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Image Model</label>
+                            <select id="setting-image-model" class="w-full glass-input rounded-lg p-3 text-sm bg-black text-white">
+                                <option value="gemini-2.5-flash-image">Gemini 2.5 Flash Image</option>
+                                <option value="imagen-3.0-generate-001">Imagen 3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Config -->
+                <div id="tab-system" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">System Instructions</label>
+                            <p class="text-[10px] text-gray-500 mb-2">Define how the AI should behave (e.g., "Be concise", "Answer in French").</p>
+                            <textarea id="setting-system-instr" rows="6" class="w-full glass-input rounded-lg p-3 text-sm font-mono" placeholder="You are a helpful assistant..."></textarea>
+                        </div>
+                         <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase">Suggestions</label>
+                             <div class="flex items-center gap-3">
+                                 <input type="checkbox" id="setting-suggestions" class="w-4 h-4 accent-neonBlue bg-gray-700 border-gray-600 rounded">
+                                 <span class="text-sm text-gray-400">Generate suggested replies after response</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Config -->
+                <div id="tab-danger" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
+                            <div class="flex items-center gap-2 text-blue-400 mb-2">
+                                <span class="material-icons">code</span>
+                                <span class="font-bold text-sm">Source Code</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Download the current version of this app as a standalone HTML file.</p>
+                            <button id="btn-download-source" class="w-full py-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors">
+                                Download App Source
+                            </button>
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-red-500/30 bg-red-500/5">
+                            <div class="flex items-center gap-2 text-red-400 mb-2">
+                                <span class="material-icons">warning</span>
+                                <span class="font-bold text-sm">Danger Zone</span>
+                            </div>
+                            <button id="btn-reset-all" class="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors">
+                                Factory Reset (Wipe All Data)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 border-t flex justify-end gap-3" style="border-color: var(--sidebar-border); background: var(--input-bg);">
+                <button id="btn-cancel" class="px-5 py-2.5 rounded-lg text-xs font-bold text-gray-400 hover:text-current uppercase tracking-wide hover:bg-white/5 transition-colors">Cancel</button>
+                <button id="btn-save" class="px-6 py-2.5 rounded-lg bg-neonBlue text-black text-xs font-bold uppercase tracking-wide hover:shadow-[0_0_15px_rgba(0,243,255,0.4)] transition-all">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN LOGIC -->
+    <script>
+        // --- Constants ---
+        const CONFIG = {
+            storageKeys: { settings: 'ng_settings', chats: 'ng_chats', currentChat: 'ng_active_chat', theme: 'ng_theme' },
+            defaults: { 
+                botName: 'NAMAN × YASH Agent', chatModel: 'gemini-2.5-flash', imageModel: 'gemini-2.5-flash-image', 
+                imageEnabled: false, temperature: 0.7, systemInstruction: '', showSuggestions: true 
+            }
+        };
+
+        // --- State ---
+        const state = { 
+            settings: {}, 
+            chats: [], 
+            activeChatId: null, 
+            attachments: [], 
+            status: 'online', 
+            theme: 'dark',
+            isRecording: false,
+            recognition: null,
+            editingMsgId: null // New: Track which message is being edited
+        };
+
+        // --- DOM Cache ---
+        const $ = (id) => document.getElementById(id);
+        const els = {
+            app: $('app'), sidebar: $('sidebar'), chatList: $('chat-list'), msgArea: $('messages-area'),
+            input: $('chat-input'), fileInput: $('file-input'), preview: $('attachments-preview'),
+            modal: $('modal-settings'), modalContent: $('modal-content'), welcome: $('welcome-screen'),
+            statusDot: $('status-indicator'), statusText: $('status-label'), botNameDisplay: $('display-bot-name'),
+            imageGenBtn: $('btn-image-gen'), toggleImage: $('toggle-image'), suggestionChips: $('suggestion-chips'),
+            themeToggle: $('theme-toggle'), scrollBtn: $('scroll-bottom-btn'), micBtn: $('btn-mic'),
+            cancelEditBtn: $('btn-cancel-edit') // New button
+        };
+
+        // --- Init ---
+        function init() {
+            // Config Marked
+            marked.setOptions({
+                highlight: function(code, lang) {
+                    const language = highlight.getLanguage(lang) ? lang : 'plaintext';
+                    return highlight.highlight(code, { language }).value;
+                },
+                langPrefix: 'hljs language-'
+            });
+            // Config Mermaid
+            mermaid.initialize({ startOnLoad: false, theme: state.theme === 'dark' ? 'dark' : 'default', securityLevel: 'loose' });
+            
+            // Init Speech Recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                state.recognition = new SpeechRecognition();
+                state.recognition.continuous = false;
+                state.recognition.interimResults = false;
+                state.recognition.lang = 'en-US';
+
+                state.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    els.input.value += (els.input.value ? ' ' : '') + transcript;
+                    els.input.dispatchEvent(new Event('input')); // Trigger resize
+                    stopRecording();
+                };
+
+                state.recognition.onerror = (event) => {
+                    console.error('Speech error', event);
+                    stopRecording();
+                };
+
+                state.recognition.onend = () => {
+                    stopRecording();
+                };
+            } else {
+                els.micBtn.style.display = 'none';
+            }
+
+            loadState(); renderUI(); setupEvents(); checkNetwork();
+            
+            els.msgArea.addEventListener('scroll', () => {
+                const diff = els.msgArea.scrollHeight - els.msgArea.scrollTop - els.msgArea.clientHeight;
+                els.scrollBtn.classList.toggle('hidden', diff < 100);
+            });
+        }
+
+        // --- Persistence ---
+        function loadState() {
+            try {
+                const s = localStorage.getItem(CONFIG.storageKeys.settings);
+                state.settings = s ? { ...CONFIG.defaults, ...JSON.parse(s) } : { ...CONFIG.defaults };
+                
+                const c = localStorage.getItem(CONFIG.storageKeys.chats);
+                state.chats = c ? JSON.parse(c) : [];
+                
+                const cid = localStorage.getItem(CONFIG.storageKeys.currentChat);
+                state.activeChatId = cid || (state.chats.length > 0 ? state.chats[0].id : null);
+                if (state.activeChatId && !state.chats.find(c => c.id === state.activeChatId)) state.activeChatId = state.chats[0]?.id || null;
+                
+                const t = localStorage.getItem(CONFIG.storageKeys.theme);
+                state.theme = t || 'dark';
+                document.documentElement.className = state.theme;
+                els.themeToggle.querySelector('span').textContent = state.theme === 'dark' ? 'light_mode' : 'dark_mode';
+            } catch(e) { console.error('Load error', e); }
+        }
+
+        function saveState() {
+            localStorage.setItem(CONFIG.storageKeys.settings, JSON.stringify(state.settings));
+            localStorage.setItem(CONFIG.storageKeys.chats, JSON.stringify(state.chats));
+            if (state.activeChatId) localStorage.setItem(CONFIG.storageKeys.currentChat, state.activeChatId);
+            else localStorage.removeItem(CONFIG.storageKeys.currentChat);
+            localStorage.setItem(CONFIG.storageKeys.theme, state.theme);
+        }
+
+        // --- Chat Logic ---
+        function createChat() {
+            const newChat = { id: Date.now().toString(), title: 'New Conversation', messages: [], created: Date.now() };
+            state.chats.unshift(newChat);
+            state.activeChatId = newChat.id;
+            state.editingMsgId = null; // Reset edit mode
+            saveState(); renderUI();
+            els.sidebar.classList.add('-translate-x-full');
+        }
+
+        function renameChat(e, id) {
+            e.stopPropagation();
+            const chat = state.chats.find(c => c.id === id);
+            if (!chat) return;
+            const newTitle = prompt("Rename Chat:", chat.title);
+            if (newTitle) {
+                chat.title = newTitle;
+                saveState(); renderChatList();
+            }
+        }
+
+        function deleteChat(e, id) {
+            e.stopPropagation();
+            if (!confirm('Permanently delete this chat?')) return;
+            state.chats = state.chats.filter(c => c.id !== id);
+            if (state.activeChatId === id) state.activeChatId = state.chats[0]?.id || null;
+            saveState(); renderUI();
+        }
+
+        async function handleSend(txtOverride = null) {
+            const text = txtOverride !== null ? txtOverride : els.input.value.trim();
+            const hasFiles = state.attachments.length > 0;
+            if ((!text && !hasFiles) || state.status === 'thinking') return;
+            if (!state.activeChatId) createChat();
+            
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            
+            // --- EDIT MODE LOGIC ---
+            if (state.editingMsgId) {
+                const idx = chat.messages.findIndex(m => m.id === state.editingMsgId);
+                if (idx !== -1) {
+                    // This is where we safely slice the history ONLY when the user commits the new message
+                    chat.messages = chat.messages.slice(0, idx);
+                }
+                state.editingMsgId = null;
+                els.cancelEditBtn.classList.add('hidden');
+            }
+            // -----------------------
+
+            els.suggestionChips.innerHTML = ''; els.suggestionChips.classList.add('opacity-0');
+
+            const userMsg = { id: Date.now().toString(), role: 'user', text: text, files: [...state.attachments] };
+            chat.messages.push(userMsg);
+            
+            if (chat.messages.length === 1 && text) chat.title = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+
+            els.input.value = ''; els.input.style.height = '48px'; state.attachments = [];
+            renderPreview(); saveState(); renderChatList(); 
+            
+            setStatus('thinking');
+            renderMessages(true); 
+            scrollToBottom();
+            
+            try {
+                const isImageCmd = state.settings.imageEnabled && (text.toLowerCase().startsWith('/image') || text.toLowerCase().includes('generate an image'));
+                let replyText = '', replyFiles = [], tokenUsage = null;
+
+                if (isImageCmd) {
+                    const prompt = text.replace(/\/image/i, '').trim();
+                    const imgData = await apiGenerateImage(prompt, userMsg.files); // Pass user files for image editing
+                    replyText = `Generated image for: "${prompt}"`;
+                    replyFiles.push({ type: 'image/png', data: imgData });
+                } else {
+                    const result = await apiGenerateText(chat.messages);
+                    replyText = result.text;
+                    tokenUsage = result.usage;
+                    parseSuggestions(replyText);
+                }
+
+                chat.messages.push({ 
+                    id: (Date.now() + 1).toString(), 
+                    role: 'model', 
+                    text: replyText, 
+                    files: replyFiles,
+                    usage: tokenUsage 
+                });
+                setStatus('online');
+            } catch (err) {
+                console.error(err);
+                chat.messages.push({ id: (Date.now() + 1).toString(), role: 'model', text: `Error: ${err.message}`, isError: true });
+                setStatus('error');
+            }
+            saveState(); renderMessages(true); scrollToBottom();
+        }
+
+        // --- Helper: Edit / Regenerate ---
+        function enterEditMode(msgId) {
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            if (!chat) return;
+            const msg = chat.messages.find(m => m.id === msgId);
+            if (!msg || msg.role !== 'user') return;
+
+            // 1. Populate Input
+            els.input.value = msg.text; 
+            
+            // 2. Adjust input height
+            els.input.style.height = 'auto';
+            els.input.style.height = (els.input.scrollHeight) + 'px';
+            
+            // 3. Focus input
+            els.input.focus();
+
+            // 4. Enter Edit Mode State (Do not delete message yet)
+            state.editingMsgId = msgId;
+            els.cancelEditBtn.classList.remove('hidden');
+            
+            // 5. Re-render to show highlighting
+            renderMessages();
+        }
+
+        function cancelEdit() {
+            state.editingMsgId = null;
+            els.input.value = '';
+            els.input.style.height = '48px';
+            els.cancelEditBtn.classList.add('hidden');
+            renderMessages();
+        }
+        
+        function regenerateLast() {
+             const chat = state.chats.find(c => c.id === state.activeChatId);
+             if (!chat || chat.messages.length === 0) return;
+             const last = chat.messages[chat.messages.length - 1];
+             if (last.role === 'model') {
+                 chat.messages.pop(); // Remove AI msg
+                 saveState(); renderMessages();
+                 // Trigger re-send of the previous user message (now last)
+                 const lastUser = chat.messages[chat.messages.length - 1];
+                 if (lastUser && lastUser.role === 'user') {
+                     chat.messages.pop();
+                     els.input.value = lastUser.text;
+                     state.attachments = lastUser.files || [];
+                     handleSend();
+                 }
+             }
+        }
+
+        function parseSuggestions(text) {
+             if(!state.settings.showSuggestions) return;
+             const common = ["Tell me more", "Explain simply", "Give an example"];
+             els.suggestionChips.innerHTML = common.map(s => `<button class="chip" onclick="handleSend('${s}')">${s}</button>`).join('');
+             els.suggestionChips.classList.remove('opacity-0');
+        }
+
+        // --- Speech Logic ---
+        function toggleSpeech() {
+            if (!state.recognition) return;
+            if (state.isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            state.isRecording = true;
+            state.recognition.start();
+            els.micBtn.classList.add('text-red-500', 'animate-pulse');
+            els.micBtn.querySelector('.material-icons').textContent = 'mic_off';
+        }
+
+        function stopRecording() {
+            state.isRecording = false;
+            try { state.recognition.stop(); } catch(e){}
+            els.micBtn.classList.remove('text-red-500', 'animate-pulse');
+            els.micBtn.querySelector('.material-icons').textContent = 'mic';
+        }
+
+        function speakText(text, btn) {
+            if ('speechSynthesis' in window) {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    if (btn.dataset.speaking === 'true') {
+                        btn.dataset.speaking = 'false';
+                        btn.querySelector('.material-icons').textContent = 'volume_up';
+                        btn.classList.remove('text-neonBlue');
+                        return;
+                    }
+                }
+                
+                document.querySelectorAll('.btn-speak').forEach(b => {
+                    b.dataset.speaking = 'false';
+                    b.querySelector('.material-icons').textContent = 'volume_up';
+                    b.classList.remove('text-neonBlue');
+                });
+
+                const cleanText = text.replace(/[*#`]/g, '').replace(/\[(.*?)\]\(.*?\)/g, '$1').replace(/<[^>]*>/g, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.onend = () => {
+                    btn.dataset.speaking = 'false';
+                    btn.querySelector('.material-icons').textContent = 'volume_up';
+                    btn.classList.remove('text-neonBlue');
+                };
+
+                btn.dataset.speaking = 'true';
+                btn.querySelector('.material-icons').textContent = 'stop';
+                btn.classList.add('text-neonBlue');
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- API Calls ---
+        async function apiGenerateText(history) {
+            const key = state.settings.chatApiKey;
+            if (!key) throw new Error('API Key missing. Check Settings.');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${state.settings.chatModel}:generateContent?key=${key}`;
+            const contents = history.map(msg => {
+                const parts = [{ text: msg.text }];
+                if (msg.files) msg.files.forEach(f => {
+                    if (f.type.startsWith('image/')) parts.push({ inline_data: { mime_type: f.type, data: f.data.split(',')[1] } });
+                });
+                return { role: msg.role === 'user' ? 'user' : 'model', parts };
+            });
+            const body = { contents, generationConfig: { temperature: parseFloat(state.settings.temperature) || 0.7, maxOutputTokens: 8192 } };
+            
+            // Inject System Instruction about Image Gen Status
+            let sysInstr = state.settings.systemInstruction || "";
+            if (!state.settings.imageEnabled) {
+                sysInstr += "\n\n[SYSTEM NOTICE: Image generation and image editing capabilities are currently DISABLED by the user. If the user asks to generate, create, or edit an image, you must explicitly state that you cannot do so because the feature is disabled in settings. Do NOT pretend to generate an image.]";
+            }
+            if (sysInstr) body.systemInstruction = { parts: [{ text: sysInstr }] };
+            
+            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || res.statusText);
+            return { text: data.candidates?.[0]?.content?.parts?.[0]?.text || "No response.", usage: data.usageMetadata ? { input: data.usageMetadata.promptTokenCount, output: data.usageMetadata.candidatesTokenCount } : null };
+        }
+
+        async function apiGenerateImage(prompt, attachments = []) {
+            const key = state.settings.imageApiKey || state.settings.chatApiKey;
+            if(!key) throw new Error("Image API Key missing");
+            const model = state.settings.imageModel;
+            
+            // Case 1: Imagen Models (Strictly Text-to-Image via predict)
+            if (model.includes('imagen')) {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${key}`;
+                const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1, aspectRatio: "1:1" } }) });
+                if(!res.ok) {
+                   const err = await res.json();
+                   throw new Error(err.error?.message || "Imagen API Failed");
+                }
+                const b64 = (await res.json()).predictions?.[0]?.bytesBase64Encoded;
+                if(!b64) throw new Error("No image data");
+                return `data:image/png;base64,${b64}`;
+            } 
+            
+            // Case 2: Gemini Models (Text-to-Image OR Image-to-Image via generateContent)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            
+            const parts = [{ text: prompt }];
+            
+            // Add input images for editing
+            attachments.forEach(f => {
+                if(f.type.startsWith('image/')) {
+                     parts.push({ inline_data: { mime_type: f.type, data: f.data.split(',')[1] } });
+                }
+            });
+
+            const body = { contents: [{ parts: parts }] };
+            
+            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || res.statusText);
+
+            // Scan parts for inlineData
+            const candidates = data.candidates || [];
+            if (!candidates.length) throw new Error("No candidates returned");
+            
+            const contentParts = candidates[0].content?.parts || [];
+            const imgPart = contentParts.find(p => p.inline_data || p.inlineData);
+            
+            if (imgPart) {
+                const id = imgPart.inline_data || imgPart.inlineData;
+                return `data:${id.mime_type || id.mimeType};base64,${id.data}`;
+            }
+            
+            // If no image, maybe text explaining refusal?
+            const textPart = contentParts.find(p => p.text);
+            if(textPart) {
+                throw new Error("Model refused to generate image: " + textPart.text);
+            }
+            
+            throw new Error("Model response did not contain an image.");
+        }
+
+        // --- Rendering ---
+        function renderUI() {
+            renderChatList(); renderMessages(); updateStatusUI();
+            els.botNameDisplay.textContent = state.settings.botName;
+            els.imageGenBtn.classList.toggle('hidden', !state.settings.imageEnabled);
+        }
+
+        function renderChatList() {
+            els.chatList.innerHTML = '';
+            state.chats.forEach(chat => {
+                const div = document.createElement('div');
+                const isActive = chat.id === state.activeChatId;
+                div.className = `p-3 rounded-xl flex items-center gap-3 cursor-pointer transition-all ${isActive ? 'bg-white/10 border border-white/5' : 'hover:bg-white/5 border border-transparent text-gray-500 hover:text-current'}`;
+                if(isActive) div.style.borderColor = 'rgba(255,255,255,0.1)';
+                div.onclick = () => { state.activeChatId = chat.id; state.editingMsgId = null; saveState(); renderUI(); if(window.innerWidth < 768) els.sidebar.classList.add('-translate-x-full'); };
+                div.innerHTML = `<span class="material-icons text-sm ${isActive ? 'text-neonBlue' : ''}">chat_bubble_outline</span><span class="text-xs font-medium truncate flex-1">${chat.title}</span><div class="flex opacity-0 group-hover:opacity-100 transition-opacity"><button class="text-gray-500 hover:text-neonBlue p-1" onclick="renameChat(event, '${chat.id}')"><span class="material-icons text-sm">edit</span></button><button class="text-gray-500 hover:text-red-400 p-1" onclick="deleteChat(event, '${chat.id}')"><span class="material-icons text-sm">delete</span></button></div>`;
+                div.classList.add('group'); els.chatList.appendChild(div);
+            });
+        }
+
+        function renderMessages(animateLast = false) {
+            els.msgArea.innerHTML = '';
+            if (!state.activeChatId || !state.chats.find(c => c.id === state.activeChatId)?.messages.length) {
+                els.welcome.classList.remove('hidden'); els.msgArea.appendChild(els.welcome); return;
+            }
+            els.welcome.classList.add('hidden');
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            
+            chat.messages.forEach((msg, index) => {
+                const isUser = msg.role === 'user';
+                const div = document.createElement('div');
+                const isLast = index === chat.messages.length - 1;
+                const isEditing = msg.id === state.editingMsgId;
+
+                // Visual Indicator for Editing
+                div.className = `flex gap-4 ${isUser ? 'flex-row-reverse' : ''} group relative msg-container ${animateLast && isLast ? 'opacity-0' : ''}`;
+                
+                let rawHtml = marked.parse(msg.text);
+                let filesHtml = '';
+                if (msg.files && msg.files.length) {
+                    filesHtml = `<div class="flex gap-2 mb-2 flex-wrap">` + msg.files.map(f => {
+                        if(f.type.startsWith('image/')) {
+                            // Using a data-url onclick to open in new tab robustly
+                            return `<img src="${f.data}" class="h-40 rounded-lg border border-white/10 shadow-lg cursor-pointer hover:scale-105 transition-transform" onclick="const w=window.open(); w.document.write('<img src=&quot;${f.data}&quot; style=&quot;max-width:100%&quot;>');">`;
+                        }
+                        return '';
+                    }).join('') + `</div>`;
+                }
+
+                let metaHtml = '';
+                if (!isUser && msg.usage) {
+                    metaHtml = `<div class="text-[10px] text-gray-500 mt-2 flex items-center gap-2 select-none"><span class="material-icons text-[10px]">token</span> ${msg.usage.output} tokens</div>`;
+                }
+
+                // Add highlight class if editing
+                const bubbleClass = `${isUser ? 'msg-bubble-user rounded-tr-sm' : 'msg-bubble-ai rounded-tl-sm'} ${isEditing ? 'editing-msg' : ''}`;
+
+                const actionHtml = `
+                    <div class="flex items-center gap-2 mt-2 px-1 opacity-80 hover:opacity-100 transition-opacity ${isUser ? 'flex-row-reverse' : ''}">
+                        <button onclick="speakText(state.chats.find(c => c.id === state.activeChatId).messages.find(m => m.id === '${msg.id}').text, this)" class="btn-speak p-1.5 text-gray-400 hover:text-current rounded" style="background: var(--action-btn-hover)" title="Read Aloud"><span class="material-icons text-sm">volume_up</span></button>
+                        <button onclick="copyText('${msg.id}', this)" class="p-1.5 text-gray-400 hover:text-current rounded" style="background: var(--action-btn-hover)" title="Copy"><span class="material-icons text-sm">content_copy</span></button>
+                        ${isUser 
+                            ? `<button onclick="enterEditMode('${msg.id}')" class="p-1.5 text-gray-400 hover:text-neonBlue rounded ${isEditing ? 'text-neonBlue' : ''}" style="background: var(--action-btn-hover)" title="Edit"><span class="material-icons text-sm">edit</span></button>` 
+                            : `<button onclick="regenerateLast()" class="p-1.5 text-gray-400 hover:text-neonBlue rounded" style="background: var(--action-btn-hover)" title="Regenerate"><span class="material-icons text-sm">refresh</span></button>
+                               <button onclick="downloadText('${msg.id}')" class="p-1.5 text-gray-400 hover:text-current rounded" style="background: var(--action-btn-hover)" title="Download"><span class="material-icons text-sm">download</span></button>`
+                        }
+                    </div>
+                `;
+
+                div.innerHTML = `
+                    <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-xs shadow-lg ${isUser ? 'bg-blue-600 text-white' : 'bg-gradient-to-br from-neonBlue to-blue-600 text-black'}">${isUser ? 'U' : 'AI'}</div>
+                    <div class="max-w-[85%] md:max-w-[75%] relative min-w-0">
+                        <div class="p-4 rounded-2xl shadow-sm ${bubbleClass} prose prose-invert max-w-none transition-all duration-300">
+                            ${filesHtml}
+                            <div id="content-${msg.id}">${rawHtml}</div>
+                            ${metaHtml}
+                        </div>
+                        ${actionHtml}
+                    </div>
+                `;
+                els.msgArea.appendChild(div);
+
+                if (animateLast && isLast) anime({ targets: div, opacity: [0, 1], translateY: [20, 0], duration: 400, easing: 'easeOutQuad' });
+
+                const contentEl = document.getElementById(`content-${msg.id}`);
+                if(contentEl) {
+                    renderMathInElement(contentEl, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });
+                    contentEl.querySelectorAll('code.language-mermaid').forEach(block => {
+                        const pre = block.parentElement; const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+                        const div = document.createElement('div'); div.id = id; div.className = 'mermaid'; div.textContent = block.textContent; pre.replaceWith(div);
+                    });
+                }
+            });
+            mermaid.run();
+
+            if (state.status === 'thinking') {
+                const thinkDiv = document.createElement('div'); thinkDiv.className = 'flex gap-4 opacity-0 msg-container';
+                thinkDiv.innerHTML = `<div class="w-8 h-8 rounded-full flex-shrink-0 bg-gradient-to-br from-neonBlue to-blue-600 flex items-center justify-center font-bold text-black text-xs">AI</div><div class="glass-panel p-4 rounded-2xl rounded-tl-sm flex items-center gap-1.5 msg-bubble-ai"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+                els.msgArea.appendChild(thinkDiv);
+                anime({ targets: thinkDiv, opacity: [0, 1], translateY: [10, 0], duration: 300, easing: 'easeOutQuad' });
+                requestAnimationFrame(() => els.msgArea.scrollTop = els.msgArea.scrollHeight);
+            }
+        }
+
+        // --- Action Handlers ---
+        window.copyText = async (id, btn) => {
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            const msg = chat?.messages.find(m => m.id === id);
+            if(!msg) return;
+            const textToCopy = msg.text; let copied = false;
+            if (navigator.clipboard && navigator.clipboard.writeText) { try { await navigator.clipboard.writeText(textToCopy); copied = true; } catch (err) {} }
+            if (!copied) { try { const ta = document.createElement('textarea'); ta.value = textToCopy; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select(); copied = document.execCommand('copy'); document.body.removeChild(ta); } catch (e) {} }
+            if (copied && btn) { const icon = btn.querySelector('.material-icons'); if(icon) { const original = icon.textContent; icon.textContent = 'check'; icon.classList.add('text-green-400'); setTimeout(() => { icon.textContent = original; icon.classList.remove('text-green-400'); }, 2000); } }
+        };
+
+        window.downloadText = (id) => {
+            const chat = state.chats.find(c => c.id === state.activeChatId);
+            const msg = chat?.messages.find(m => m.id === id);
+            if(msg) { const blob = new Blob([msg.text], {type: 'text/plain'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `response-${id}.txt`; a.click(); URL.revokeObjectURL(url); }
+        };
+
+        // --- Standard UI ---
+        function scrollToBottom() { els.msgArea.scrollTo({ top: els.msgArea.scrollHeight, behavior: 'smooth' }); }
+        function setStatus(s) { state.status = s; updateStatusUI(); }
+        function updateStatusUI() {
+            const s = state.status;
+            if (s === 'online') { els.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]'; els.statusText.textContent = 'ONLINE'; }
+            else if (s === 'thinking') { els.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse'; els.statusText.textContent = 'THINKING'; }
+            else if (s === 'error') { els.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]'; els.statusText.textContent = 'ERROR'; }
+            else { els.statusDot.className = 'w-1.5 h-1.5 rounded-full bg-gray-500'; els.statusText.textContent = 'OFFLINE'; }
+        }
+        function checkNetwork() { window.addEventListener('online', () => setStatus('online')); window.addEventListener('offline', () => setStatus('offline')); if (!navigator.onLine) setStatus('offline'); }
+
+        // --- Events ---
+        function updateImageToggleState(enable) {
+            const btn = els.toggleImage; const ball = btn.querySelector('span'); const config = $('image-config');
+            if (enable) { btn.classList.add('bg-neonPurple', 'active-toggle'); btn.classList.remove('bg-gray-700'); ball.style.transform = 'translateX(24px)'; config.classList.remove('opacity-50', 'pointer-events-none'); } 
+            else { btn.classList.remove('bg-neonPurple', 'active-toggle'); btn.classList.add('bg-gray-700'); ball.style.transform = 'translateX(0)'; config.classList.add('opacity-50', 'pointer-events-none'); }
+        }
+
+        function setupEvents() {
+            $('open-sidebar').onclick = () => els.sidebar.classList.remove('-translate-x-full');
+            $('close-sidebar').onclick = () => els.sidebar.classList.add('-translate-x-full');
+            $('btn-new-chat').onclick = createChat;
+            $('btn-clear-chat').onclick = () => { if(state.activeChatId && confirm('Clear?')) { const c = state.chats.find(x => x.id === state.activeChatId); if(c) { c.messages = []; saveState(); renderMessages(); }}};
+            
+            els.input.oninput = function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; };
+            els.input.onkeydown = (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }};
+            $('btn-send').onclick = () => handleSend();
+            
+            $('btn-attach').onclick = () => els.fileInput.click();
+            els.fileInput.onchange = (e) => { Array.from(e.target.files).forEach(f => { const r = new FileReader(); r.onload = (ev) => { state.attachments.push({ name: f.name, type: f.type, data: ev.target.result }); renderPreview(); }; r.readAsDataURL(f); }); els.fileInput.value = ''; };
+
+            els.micBtn.onclick = toggleSpeech;
+            els.cancelEditBtn.onclick = cancelEdit;
+            
+            $('btn-open-settings').onclick = openSettings;
+            $('btn-close-settings').onclick = closeSettings;
+            $('btn-cancel').onclick = closeSettings;
+            $('btn-save').onclick = saveSettingsFromUI;
+
+            $('toggle-image').onclick = () => { const isNowActive = !els.toggleImage.classList.contains('active-toggle'); updateImageToggleState(isNowActive); };
+            $('theme-toggle').onclick = () => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.className = state.theme; els.themeToggle.querySelector('span').textContent = state.theme === 'dark' ? 'light_mode' : 'dark_mode'; saveState(); renderMessages(); };
+            els.scrollBtn.onclick = () => scrollToBottom();
+            $('setting-temp').oninput = (e) => $('temp-display').textContent = e.target.value;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = () => { document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('border-neonBlue', 'text-neonBlue'); b.classList.add('border-transparent', 'text-gray-500'); }); btn.classList.add('border-neonBlue', 'text-neonBlue'); btn.classList.remove('border-transparent', 'text-gray-500'); document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden')); $(btn.dataset.target).classList.remove('hidden'); });
+            $('btn-reset-all').onclick = () => { if(confirm('RESET ALL?')) { localStorage.clear(); location.reload(); }};
+            if($('btn-download-source')) { $('btn-download-source').onclick = () => { const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML; const blob = new Blob([html], {type: 'text/html'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'neon-genesis-app.html'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }; }
+        }
+
+        function renderPreview() { if (!state.attachments.length) { els.preview.classList.add('hidden'); return; } els.preview.classList.remove('hidden'); els.preview.innerHTML = ''; state.attachments.forEach((f, i) => { const d = document.createElement('div'); d.className = 'relative group'; d.innerHTML = `<img src="${f.data}" class="h-10 w-10 rounded object-cover border border-white/20"><button class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeAttachment(${i})">×</button>`; els.preview.appendChild(d); }); }
+        window.removeAttachment = (i) => { state.attachments.splice(i, 1); renderPreview(); };
+        function openSettings() { els.modal.classList.remove('hidden'); requestAnimationFrame(() => els.modal.classList.remove('opacity-0')); els.modalContent.classList.remove('scale-95'); $('setting-bot-name').value = state.settings.botName; $('setting-api-key').value = state.settings.chatApiKey; $('setting-model').value = state.settings.chatModel; $('setting-image-key').value = state.settings.imageApiKey; $('setting-image-model').value = state.settings.imageModel; $('setting-temp').value = state.settings.temperature; $('temp-display').textContent = state.settings.temperature; $('setting-system-instr').value = state.settings.systemInstruction || ''; $('setting-suggestions').checked = state.settings.showSuggestions; updateImageToggleState(state.settings.imageEnabled); }
+        function closeSettings() { els.modal.classList.add('opacity-0'); els.modalContent.classList.add('scale-95'); setTimeout(() => els.modal.classList.add('hidden'), 300); }
+        function saveSettingsFromUI() { state.settings.botName = $('setting-bot-name').value; state.settings.chatApiKey = $('setting-api-key').value; state.settings.chatModel = $('setting-model').value; state.settings.imageApiKey = $('setting-image-key').value; state.settings.imageModel = $('setting-image-model').value; state.settings.imageEnabled = els.toggleImage.classList.contains('active-toggle'); state.settings.temperature = $('setting-temp').value; state.settings.systemInstruction = $('setting-system-instr').value; state.settings.showSuggestions = $('setting-suggestions').checked; saveState(); renderUI(); closeSettings(); }
+        window.togglePassword = (id) => { const x = $(id); x.type = x.type === 'password' ? 'text' : 'password'; };
+
+        init();
+    </script>
+<script src="script.js"></script>
+</body>
+</html>
